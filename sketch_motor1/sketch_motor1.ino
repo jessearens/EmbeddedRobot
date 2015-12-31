@@ -13,13 +13,52 @@ const int reversePin_2 = 3;
 const int forwardPin_2 = 2;
 
 void MotormessageCb( const geometry_msgs::Twist& cmd_vel){
-  digitalWrite(forwardPin_1,HIGH);
-  digitalWrite(forwardPin_2,HIGH);
-
+  if (cmd_vel.angular.z != 0){
+    if (cmd_vel.angular.z > 0){
+      turnleft();
+    }
+    else { 
+      turnright();
+    } 
+  }
+  
+  if (cmd_vel.linear.x !=0){
+    if (cmd_vel.linear.x > 0){
+      moveforward();
+    }
+    else {
+      movereverse();
+    }
+  }
 }
-void StartMotors( const std_msgs::Empty& stop_msg){
+
+
+void turnleft(){
+  digitalWrite(forwardPin_1,HIGH);
+  delay(500);
+  digitalWrite(forwardPin_1,LOW);
+}
+
+void turnright(){
+  digitalWrite(forwardPin_2,HIGH);
+  delay(500);
+  digitalWrite(forwardPin_2,LOW);
+}
+
+void moveforward(){
   digitalWrite(forwardPin_1,HIGH);
   digitalWrite(forwardPin_2,HIGH);
+  delay(500);
+  digitalWrite(forwardPin_1,LOW);
+  digitalWrite(forwardPin_2,LOW);
+}
+
+void movereverse(){
+  digitalWrite(reversePin_1,HIGH);
+  digitalWrite(reversePin_2,HIGH);
+  delay(500);
+  digitalWrite(reversePin_1,LOW);
+  digitalWrite(reversePin_2,LOW);
 }
 
 void DisablemessageCb( const std_msgs::Empty& stop_msg){
@@ -30,7 +69,7 @@ digitalWrite(forwardPin_2,LOW);
 }
 
 ros::Subscriber<std_msgs::Empty> substop("stop_msg", &DisablemessageCb);
-ros::Subscriber<std_msgs::Empty> substart("start_msg", &StartMotors);
+
 ros::Subscriber<geometry_msgs::Twist> subtwist("cmd_vel", &MotormessageCb);
 
 void setup()
@@ -45,9 +84,6 @@ void setup()
   nh.initNode();
   nh.subscribe(subtwist);
   nh.subscribe(substop);
-  nh.subscribe(substart);
-  //digitalWrite(enablePin_1, HIGH);
-  //digitalWrite(enablePin_2, HIGH);
 }
 
 void loop()
