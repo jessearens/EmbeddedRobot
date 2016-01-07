@@ -1,13 +1,11 @@
-
 #include <ros.h>
-
 #include <std_msgs/Empty.h>
 #include <geometry_msgs/Twist.h>
 #include <elapsedMillis.h>
 #include <stdint.h>
 
-ros::NodeHandle  nh;
-//pins 1 are right motor, 2 is left
+//Setting the motor pins
+//pins 1 are for right motor, 2 are for the left motor.
 const int enablePin_1 = 24;
 const int reversePin_1 = 7;
 const int forwardPin_1 = 6;
@@ -15,13 +13,13 @@ const int enablePin_2 = 25;
 const int reversePin_2 = 3;
 const int forwardPin_2 = 2;
 
-//pins for the ultrasonic sensor
+//Setting the pins for the ultrasonic sensor
 #define usensor_triggerPin 23
 #define usensor_echoPin 22
 
 volatile int8_t usensor_interrupt = 0;
-
 elapsedMillis timeElapsed;
+ros::NodeHandle nh;
 
 void MotormessageCb( const geometry_msgs::Twist& cmd_vel){
   timeElapsed = 0; //Set timer to zero if a twist message is received.
