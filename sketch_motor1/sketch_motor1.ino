@@ -4,6 +4,12 @@
 #include <elapsedMillis.h>
 #include <stdint.h>
 
+
+class NewHardware : public ArduinoHardware {
+  public: NewHardware():ArduinoHardware(&Serial1, 57600){};
+};
+ros::NodeHandle_<NewHardware> nh;
+
 //Setting the motor pins
 //pins 1 are for right motor, 2 are for the left motor.
 const int enablePin_1 = 24;
