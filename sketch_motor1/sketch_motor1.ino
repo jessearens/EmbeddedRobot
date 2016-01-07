@@ -24,9 +24,7 @@ ros::NodeHandle nh;
 void MotormessageCb( const geometry_msgs::Twist& cmd_vel){
   timeElapsed = 0; //Set timer to zero if a twist message is received.
   
-  if(usensor_interrupt) return;
-  
-  if (cmd_vel.angular.z != 0){
+   if (cmd_vel.angular.z != 0){
     if (cmd_vel.angular.z > 0){
       turnleft();
     }
@@ -80,7 +78,7 @@ void Shutdown(){
   digitalWrite(forwardPin_1,LOW);
   digitalWrite(forwardPin_2,LOW);
   
-  if (timeElapsed > 30000){
+  if (timeElapsed > 300000){
     //stop entirely
     exit(0);
   }
@@ -88,30 +86,27 @@ void Shutdown(){
 
 void checkUSensor(){
   
-  long avgDistance = 0;
+  long minDistance = 1000;
   int count = 10;
   
   //TODO: try more than 10 times? check for latency. the robot should stop within a second.
   for(int i = 0; i < count; i++){
     long newDistance = getUsensorDistance();
     
-    if(newDistance > 0){
-      avgDistance += newDistance;
+    if(newDistance < minDistance){
+      minDistance = newDistance;
     }  
-    else{
-      count --;
-    }
   }
-  avgDistance /= count;
   
   //TODO: test for best value (corresponding to 10 cm distance)
-  if(avgDistance < 12){
+  if(minDistance < 24){
     usensor_interrupt = 1;
+    Shutdown();
+    checkUSensor();
   }
   else{
     usensor_interrupt = 0;
   }
-  delay(300);
 }
 
 long getUsensorDistance(){
@@ -151,7 +146,6 @@ void setup()
 void loop()
 { 
   nh.spinOnce();
-  delay(100);
   if (timeElapsed > 3000){
     Shutdown();
   }
