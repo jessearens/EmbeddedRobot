@@ -141,6 +141,8 @@ void setup()
 
 void loop()
 { 
+  nh.spinOnce();
+  delay(100);
   if (timeElapsed > 3000){
     Shutdown();
   }
