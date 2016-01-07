@@ -5,10 +5,13 @@
 #include <stdint.h>
 
 
-class NewHardware : public ArduinoHardware {
+/** class NewHardware : public ArduinoHardware {
   public: NewHardware():ArduinoHardware(&Serial1, 57600){};
 };
 ros::NodeHandle_<NewHardware> nh;
+**/
+
+ros::NodeHandle nh;
 
 //Setting the motor pins
 //pins 1 are for right motor, 2 are for the left motor.
@@ -25,7 +28,6 @@ const int forwardPin_2 = 2;
 
 volatile int8_t usensor_interrupt = 0;
 elapsedMillis timeElapsed;
-ros::NodeHandle nh;
 
 void MotormessageCb( const geometry_msgs::Twist& cmd_vel){
   timeElapsed = 0; //Set timer to zero if a twist message is received.
@@ -105,7 +107,7 @@ void checkUSensor(){
   }
   
   //TODO: test for best value (corresponding to 10 cm distance)
-  if(minDistance < 24){
+  if(minDistance < 48){
     usensor_interrupt = 1;
     Shutdown();
     checkUSensor();
