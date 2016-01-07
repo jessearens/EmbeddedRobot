@@ -4,6 +4,7 @@
 #include <std_msgs/Empty.h>
 #include <geometry_msgs/Twist.h>
 #include <elapsedMillis.h>
+#include <stdint.h>
 
 ros::NodeHandle  nh;
 //pins 1 are right motor, 2 is left
@@ -14,10 +15,19 @@ const int enablePin_2 = 25;
 const int reversePin_2 = 3;
 const int forwardPin_2 = 2;
 
+//pins for the ultrasonic sensor
+#define usensor_triggerPin 23
+#define usensor_echoPin 22
+
+volatile int8_t usensor_interrupt = 0;
+
 elapsedMillis timeElapsed;
 
 void MotormessageCb( const geometry_msgs::Twist& cmd_vel){
   timeElapsed = 0; //Set timer to zero if a twist message is received.
+  
+  if(usensor_interrupt) return;
+  
   if (cmd_vel.angular.z != 0){
     if (cmd_vel.angular.z > 0){
       turnleft();
@@ -66,10 +76,51 @@ void movereverse(){
 }
 
 void Shutdown(){
-digitalWrite(reversePin_1,LOW);
-digitalWrite(reversePin_2,LOW);
-digitalWrite(forwardPin_1,LOW);
-digitalWrite(forwardPin_2,LOW);
+  digitalWrite(reversePin_1,LOW);
+  digitalWrite(reversePin_2,LOW);
+  digitalWrite(forwardPin_1,LOW);
+  digitalWrite(forwardPin_2,LOW);
+}
+
+void checkUSensor(){
+  
+  long avgDistance = 0;
+  int count = 10;
+  
+  //TODO: try more than 10 times? check for latency.
+  for(int i = 0; i < count; i++){
+    long newDistance = getUsensorDistance();
+    
+    if(newDistance > 0){
+      avgDistance += newDistance;
+    }  
+    else{
+      count --;
+    }
+  }
+  avgDistance /= count;
+  
+  //TODO: test for best value (corresponding to 20 cm distance)
+  if(avgDistance < 100){
+    usensor_interrupt = 1;
+  }
+  else{
+    usensor_interrupt = 0;
+  }
+}
+
+long getUsensorDistance(){
+  
+  long distance = 0;
+  
+  digitalWrite(usensor_triggerPin, LOW);
+  delayMicroseconds(8);
+  digitalWrite(usensor_triggerPin, HIGH);
+  delayMicroseconds(15);
+  digitalWrite(usensor_triggerPin, LOW);
+  distance = pulseIn(usensor_echoPin, HIGH);
+  
+  return distance;
 }
 
 ros::Subscriber<geometry_msgs::Twist> subtwist("cmd_vel", &MotormessageCb);
@@ -83,6 +134,9 @@ void setup()
   pinMode(forwardPin_1,OUTPUT);
   pinMode(forwardPin_2,OUTPUT);
   
+  pinMode(usensor_triggerPin, OUTPUT);
+  pinMode(usensor_echoPin, INPUT);
+  
   nh.initNode();
   nh.subscribe(subtwist);
 }
@@ -92,5 +146,6 @@ void loop()
   if (timeElapsed > 3000){
     Shutdown();
   }
+  checkUSensor();
     
 }
