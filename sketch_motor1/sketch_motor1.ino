@@ -76,10 +76,16 @@ void movereverse(){
 }
 
 void Shutdown(){
+  
   digitalWrite(reversePin_1,LOW);
   digitalWrite(reversePin_2,LOW);
   digitalWrite(forwardPin_1,LOW);
   digitalWrite(forwardPin_2,LOW);
+  
+  if (timeElapsed > 30000){
+    //stop entirely
+    exit(0);
+  }
 }
 
 void checkUSensor(){
@@ -87,7 +93,7 @@ void checkUSensor(){
   long avgDistance = 0;
   int count = 10;
   
-  //TODO: try more than 10 times? check for latency.
+  //TODO: try more than 10 times? check for latency. the robot should stop within a second.
   for(int i = 0; i < count; i++){
     long newDistance = getUsensorDistance();
     
@@ -100,13 +106,14 @@ void checkUSensor(){
   }
   avgDistance /= count;
   
-  //TODO: test for best value (corresponding to 20 cm distance)
-  if(avgDistance < 100){
+  //TODO: test for best value (corresponding to 10 cm distance)
+  if(avgDistance < 12){
     usensor_interrupt = 1;
   }
   else{
     usensor_interrupt = 0;
   }
+  delay(300);
 }
 
 long getUsensorDistance(){
@@ -120,6 +127,8 @@ long getUsensorDistance(){
   digitalWrite(usensor_triggerPin, LOW);
   distance = pulseIn(usensor_echoPin, HIGH);
   
+  //to get distance in cm:
+  distance /= 29.1;
   return distance;
 }
 
@@ -143,9 +152,10 @@ void setup()
 
 void loop()
 { 
+  
   if (timeElapsed > 3000){
     Shutdown();
   }
   checkUSensor();
-    
+  
 }
