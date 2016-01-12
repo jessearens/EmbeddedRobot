@@ -29,11 +29,11 @@ void pictureCallback(const sensor_msgs::CompressedImage::ConstPtr& picture)
 	* 	if pixel[i][y] is wit & pixel[i+1][y] != wit{
 	* 	waarde1 = i+1
 	* 	tmsg.linear.x = 1;
-	* 		if pixel[i][y] is zwart & pixel[i+1][y] != zwart{
-	* 			waarde2 = i+1
-	* 			tmsg.angular.y = halverwegeX -(waarde1+waarde2)/2 
-	* 		}
-	* 		}
+	* 	}
+	* 	if pixel[i][y] is zwart & pixel[i+1][y] != zwart{
+	* 	waarde2 = i+1
+	* 	tmsg.angular.y = halverwegeX -(waarde1+waarde2)/2 
+	* 	}
 	* 	}	
 	* 	linefollow_pub.publish(tmsg);	
 	**/
