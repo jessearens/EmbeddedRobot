@@ -4,7 +4,6 @@
 #include <sensor_msgs/CompressedImage.h>
 #include "std_msgs/String.h"
 
-
 geometry_msgs::Twist tmsg;
     tmsg.linear.x = 0;
     tmsg.linear.y = 0;
