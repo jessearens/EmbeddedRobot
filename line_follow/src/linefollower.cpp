@@ -3,8 +3,13 @@
 #include <geometry_msgs/Twist.h>
 #include <sensor_msgs/CompressedImage.h>
 #include "std_msgs/String.h"
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <sensor_msgs/image_encodings.h>
+#include <opencv2/imgproc/imgproc.hpp>
 
-
+/*
 geometry_msgs::Twist tmsg;
     tmsg.linear.x = 0;
     tmsg.linear.y = 0;
@@ -12,11 +17,21 @@ geometry_msgs::Twist tmsg;
     tmsg.angular.x = 0;
     tmsg.angular.y = 0;
     tmsg.angular.z = 0;
+*/
+
 
 void pictureCallback(const sensor_msgs::CompressedImage::ConstPtr& picture)
 {
 	ROS_INFO("I received a picture!! ");
 	
+	//cv_bridge::CvImagePtr cv_ptr;
+	//cv::Mat matrix = cv::imdecode(cv::Mat(picture),1);
+
+    
+
+	
+	//imwrite("image_bw.jpg", cv_ptr);
+
 	/*	Uitlezen plaatje in een grid van pixels:
 	*	Resultaat: pixel[x][y] (2D-array)
 	*	Halverwege het plaatje (y-richting) beginnen:
