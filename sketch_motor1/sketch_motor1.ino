@@ -5,13 +5,10 @@
 #include <stdint.h>
 
 
-/** class NewHardware : public ArduinoHardware {
-  public: NewHardware():ArduinoHardware(&Serial1, 57600){};
+class NewHardware : public ArduinoHardware {
+  public: NewHardware():ArduinoHardware(&Serial, 57600){};
 };
 ros::NodeHandle_<NewHardware> nh;
-**/
-
-ros::NodeHandle nh;
 
 //Setting the motor pins
 //pins 1 are for right motor, 2 are for the left motor.
@@ -31,22 +28,23 @@ elapsedMillis timeElapsed;
 
 void MotormessageCb( const geometry_msgs::Twist& cmd_vel){
   timeElapsed = 0; //Set timer to zero if a twist message is received.
-  
-   if (cmd_vel.angular.z != 0){
-    if (cmd_vel.angular.z > 0){
-      turnleft();
-    }
-    else { 
+  if (usensor_interrupt == 0) {
+    if (cmd_vel.angular.z != 0){
+      if (cmd_vel.angular.z > 0){
+        turnleft();
+      }
+      else { 
       turnright();
-    } 
-  }
-  
-  if (cmd_vel.linear.x !=0){
-    if (cmd_vel.linear.x > 0){
-      moveforward();
+      } 
     }
-    else {
-      movereverse();
+  
+    if (cmd_vel.linear.x !=0){
+      if (cmd_vel.linear.x > 0){
+        moveforward();
+      }
+      else {
+        movereverse();
+      }
     }
   }
 }
