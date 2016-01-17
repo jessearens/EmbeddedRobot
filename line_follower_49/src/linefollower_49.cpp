@@ -1,3 +1,11 @@
+/**
+* Group number: 49
+* Student 1:
+* Jesse Arens, 4206231
+* Student 2:
+* Rick Brugsma, 4163788
+*/
+
 #include "ros/ros.h"
 #include <sstream>
 #include <geometry_msgs/Twist.h>
